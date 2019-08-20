@@ -125,9 +125,6 @@ def get_market_list1(fileName):
                 #print count
 
     except IndexError:
-        #print "Connection to %s on port %s failed: %s"
-##        for num in range(len(MariaList)):
-##                print MariaList[num]
         return MariaList
     return MariaList
 
@@ -142,13 +139,9 @@ def orderCells(fileName):
         match = False
             
         if(mList[num].getIMP0 != mList[num].getIMP1()):
-            #print "mList[num].getIMP0", mList[num].getIMP0
-            #print "mList[num].getIMP1()", mList[num].getIMP1()
             for count in range(len(mList2)):
                 #print "not same"
                 if(mList[num].getIMP0() == mList2[count].getIMP1()):
-                        
-                    #mList[num][mList[num].IMP0LEN: mList[num].IMP0LEN + mList[num].IMP1LEN] = mList2[count][mList2[count].IMP0LEN: mList2[count].IMP0LEN + mList2[count].IMP1LEN]
                     lst = mList2[count].getIMP1List()
                     mList[num].setIMP1(lst[0],lst[1],lst[2],lst[3], '','')
                     #print "lst[0]", lst[0]
@@ -161,29 +154,18 @@ def orderCells(fileName):
             match = False
 
         if(mList[num].getIMP0() != mList[num].getIMP2()):
-##            print "mList[num].getIMP0()", mList[num].getIMP0()
-##            print "mList[num].getIMP2()", mList[num].getIMP2()
             for count in range(len(mList2)):
                     
                 if(mList[num].getIMP0() == mList2[count].getIMP2()):
-##                    print "found ittttttttttttttttttttttttttttttttttttttttttttttt", mList2[count].getIMP2()
                     lst = mList2[count].getIMP2List()
 ##                    print lst
                     mList[num].setIMP2(lst[0],lst[1],lst[2],lst[3], '', '')
-                    
-                        #mList[num].setIMP2(lst[0],lst[1],lst[2],lst[3])
                     match = True
                     count = len(mList2)
 
                 if(not match):
                     #m = maria()
                     mList[num].setIMP2ToBlank()
-                    
-##    for num in range(len(mList)):
-##        print mList[num]
-##    print "SPLITTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-##    for num in range(len(mList2)):
-##        print mList2[num]
     return mList    
 
 def convertValToInt(lst):
@@ -242,19 +224,13 @@ def convertToMariaOrdList(mariaList, orderLst):
             newMariaList = Maria13.Maria13(IMP0List[0],IMP0List[1],IMP0List[2],IMP0List[3],IMP0List[4],IMP0List[5],IMP0List[6], '','', IMP1List[0],IMP1List[1],IMP1List[2],IMP1List[3],IMP2List[0],IMP2List[1],IMP2List[2],IMP2List[3])
             newMariaList.setIMPLENS(IMP0LEN, IMP1LEN, IMP2LEN)
             MariaList = MariaList + [newMariaList]
-            #count = count + 1
-        #print(mariaList[num].getIMP0LEN())
-        #print(mariaList[num].getIMP1LEN())
-        #print(mariaList[num].getIMP2LEN())
         print (newMariaList)
     return MariaList
 
 
 def writeToXls(mariaList, outfile):
-##    print "writeToXls"
     f= open(outfile,"w+")
     f.close() 
-
 
     workbook = xlwt.Workbook()
     sheet = workbook.add_sheet('Sheet_1')
@@ -263,15 +239,11 @@ def writeToXls(mariaList, outfile):
     
     count = 0
     for num in range(len(mariaList)):
-##        print num
         if(num % 500 == 0):
             print( "writing this: ",num)
         lst0 = mariaList[num].getIMP0List()
         lst1 = mariaList[num].getIMP1List()
         lst2 = mariaList[num].getIMP2List()
-
-##        print "str(lst0[0])", lst0[0]
-##        print "lst0[1]", lst0[1]
 
         
         sheet.write(count + num, 0,lst0[0])
@@ -285,14 +257,12 @@ def writeToXls(mariaList, outfile):
 
         
         increment = 0
-        #print "mariaList[num].getIMP0LEN", mariaList[num].getIMP0LEN()
         if(mariaList[num].getIMP0LEN() == 8):
             sheet.write(count + num, 7,lst0[6])
             sheet.write(count + num, 8,lst0[7])
             increment = 2
         
         sheet.write(count + num, increment + 7,lst1[0])
-        #print "st1[0]", lst1[0]
         
         sheet.write(count + num, increment + 8,lst1[1])
         sheet.write(count + num, increment + 9,lst1[2])
@@ -303,9 +273,6 @@ def writeToXls(mariaList, outfile):
         sheet.write(count + num, increment + 12,lst2[1])
         sheet.write(count + num, increment + 13,lst2[2])
         sheet.write(count + num, increment + 14,lst2[3])
-        #sheet.write(count + num, 14,lst2[4])
-        
-    #workbook.save(writeToFile)
     workbook.save(outfile)
     
     return True
@@ -313,15 +280,9 @@ def writeToXls(mariaList, outfile):
 
 @cuda.jit
 def orderedCuda(lst0, lst1, lst2, dest, lenOfRec):
-    """
-    Perform matrix multiplication of C = A * B
-    Each thread computes one element of the result matrix C
-    """
     x = cuda.grid(1)
-    #tx = cuda.threadIdx.x
+    
     val = lst0[x][0]
-    #print(val)
-    #for i in range(lenOfRec/threadsPerBlock):
     for i in range(lenOfRec):
             
             
@@ -353,15 +314,8 @@ if __name__ == '__main__':
         #check = True
         mariaList = get_market_list1(options.fileName)
         lst = convertToListPostion(mariaList)
-        '''
-        print(lst[0])
-        print("sss")
-        print(lst[1])
-        print("sss")
-        print(lst[2])
-        '''
-    	#check = writeToXls(orderCells(options.fileName), options.outputfileName)
         
+    	
         numOfRec = getRowCount(options.fileName)
 
         lst0= numpy.array( lst[0])
@@ -385,10 +339,8 @@ if __name__ == '__main__':
         # Start the kernel 
         orderedCuda[blockspergrid, threadsperblock](lst0_global_mem, lst1_global_mem, lst2_global_mem, dest_global_mem,numOfRec)
         res = dest_global_mem.copy_to_host()
+      
         
-        
-        #print((res))
-        print((res))
         check = writeToXls(convertToMariaOrdList(mariaList, res), options.outputfileName)
 
         print ('App returned %s' % check)
