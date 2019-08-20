@@ -1,7 +1,7 @@
 # mariaCudaXlsx
 #GPU: P4000, CPU: E5-2620 
 ##
-#time (original oce was somewhat brutishly coded and took about 30mins) :
+#time (original code was somewhat brutishly coded and took about 30mins) :
 ##
 #real	1m6.806s
 ##
